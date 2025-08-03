@@ -42,7 +42,7 @@ export class SqliteAdapter {
       const valor = this.extractValue(unimed);
       
       // Generate realistic tags based on case content
-      const tags = this.generateTags(detalhes, unimed);
+      const tags = this.generateTags(detalhes);
       
       return {
         id: startId + index,
@@ -117,7 +117,7 @@ export class SqliteAdapter {
     return new Date().toISOString().split('T')[0];
   }
 
-  private static generateTags(detalhes: any, unimed: UnimedProcess): PGMProcess['tags'] {
+  private static generateTags(detalhes: any): PGMProcess['tags'] {
     // Determine department based on subject matter
     let departamento = 'judicial'; // default
     

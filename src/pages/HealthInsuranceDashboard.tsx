@@ -5,11 +5,9 @@ import {
   Activity, 
   DollarSign, 
   Clock, 
-  Users,
   Heart,
   Shield,
-  FileText,
-  Calendar
+  FileText
 } from 'lucide-react';
 import { useHealthInsurance } from '../context/HealthInsuranceContext';
 

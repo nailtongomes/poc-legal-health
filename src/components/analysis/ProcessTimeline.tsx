@@ -7,18 +7,12 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Info,
-  ArrowRight,
-  ArrowDown,
-  Filter,
   Download,
   Search,
   Activity,
   BookOpen,
-  Scale,
   Users,
-  Bell,
-  Upload
+  Bell
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { HealthInsuranceProcess } from '../../types/healthInsurance';
@@ -434,7 +428,6 @@ const ProcessTimeline: React.FC<ProcessTimelineProps> = ({ process }) => {
 // Helper function to generate timeline events from process data
 function generateTimelineEvents(process: HealthInsuranceProcess): TimelineEvent[] {
   const events: TimelineEvent[] = [];
-  const analise_llm = process.analise_llm || {};
 
   // Add process initiation
   const dataAutuacao = parseDate(extractDateFromDetails(process.detalhes_capa_processual));

@@ -18,7 +18,6 @@ import {
   Activity,
   AlertTriangle,
   Shield,
-  Pill,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 

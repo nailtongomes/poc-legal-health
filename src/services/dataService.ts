@@ -1,55 +1,50 @@
-// SQLite service for Node.js environment
-import Database from 'better-sqlite3';
-import path from 'path';
-
+// JSON data service for browser environment
 export interface SqliteProcess {
   numero_processo: string;
   link_processo: string;
   data_extracao_dados: string;
   detalhes_capa_processual: string;
+  partes_principais: string;
+  data_ultimo_documento_visivel: string;
+  titlo_ultimo_documento_visivel: string;
+  ultimo_movimento_processo: string;
+  linha_tempo_otimizada: Array<{
+    data: string;
+    descricao: string;
+    documento: string[];
+  }>;
   [key: string]: any;
 }
 
 class DataService {
-  private db: Database.Database | null = null;
+  private cachedProcesses: SqliteProcess[] | null = null;
 
   constructor() {
-    // Initialize SQLite connection
-    try {
-      const dbPath = path.join(process.cwd(), 'data-samples', 'unimed.sqlite');
-      this.db = new Database(dbPath, { readonly: true });
-    } catch (error) {
-      console.error('Failed to initialize database:', error);
-    }
+    // JSON-based implementation for browser
   }
 
   async getUnimedProcesses(): Promise<SqliteProcess[]> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
+    if (this.cachedProcesses) {
+      return this.cachedProcesses;
     }
 
     try {
-      const stmt = this.db.prepare('SELECT data FROM temp_data WHERE category = ?');
-      const rows = stmt.all('processos');
-      
-      return rows.map((row: any) => {
-        try {
-          return JSON.parse(row.data);
-        } catch (error) {
-          console.error('Error parsing process data:', error);
-          return null;
-        }
-      }).filter(Boolean);
+      const response = await fetch('/data/processos.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const processes = await response.json();
+      this.cachedProcesses = processes;
+      return processes;
     } catch (error) {
-      console.error('Error fetching Unimed processes:', error);
+      console.error('Error loading processes from JSON:', error);
       return [];
     }
   }
 
   close() {
-    if (this.db) {
-      this.db.close();
-    }
+    // Clear cache
+    this.cachedProcesses = null;
   }
 }
 

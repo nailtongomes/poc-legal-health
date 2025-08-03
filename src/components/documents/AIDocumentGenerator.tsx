@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import {
   FileText,
-  Brain,
   Wand2,
   Download,
   Copy,
   RefreshCw,
   CheckCircle,
-  AlertTriangle,
-  Info,
   Settings,
   Eye,
   Edit3,
@@ -16,13 +13,8 @@ import {
   Clock,
   Scale,
   BookOpen,
-  Target,
-  Lightbulb,
   FileCheck,
-  Gavel,
-  Users,
-  Building,
-  Calendar
+  Gavel
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { HealthInsuranceProcess } from '../../types/healthInsurance';

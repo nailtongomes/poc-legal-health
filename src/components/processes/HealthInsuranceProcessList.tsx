@@ -3,14 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Search,
   Filter,
-  Calendar,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
   FileText,
   MoreVertical,
   Eye,
-  Edit,
   CheckSquare,
   Heart,
   Activity,
@@ -18,13 +13,10 @@ import {
   Bone,
   Baby,
   Stethoscope,
-  DollarSign,
-  TrendingUp
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useHealthInsurance } from '../../context/HealthInsuranceContext';
-import { HealthInsuranceProcess, MedicalSpecialty, DemandType, ManagementPriority, TrafficLightStatus } from '../../types/healthInsurance';
-import { formatDistanceToNow } from 'date-fns';
+import { MedicalSpecialty, DemandType, ManagementPriority, TrafficLightStatus } from '../../types/healthInsurance';
 
 const medicalSpecialtyIcons: Record<MedicalSpecialty, React.ComponentType<{ className?: string }>> = {
   cardiologia: Heart,
@@ -197,7 +189,7 @@ export default function HealthInsuranceProcessList() {
     // Update URL params
     const newParams = new URLSearchParams();
     Object.entries(newFilters).forEach(([k, v]) => {
-      if (v && (Array.isArray(v) ? v.length > 0 : v !== 0 && v !== false && v !== '')) {
+      if (v && (Array.isArray(v) ? v.length > 0 : v !== 0 && v !== '')) {
         newParams.set(k, Array.isArray(v) ? v.join(',') : String(v));
       }
     });

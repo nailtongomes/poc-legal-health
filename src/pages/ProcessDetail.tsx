@@ -10,10 +10,8 @@ import {
   Edit,
   Download,
   Eye,
-  Tag,
   Database,
   Activity,
-  Calendar,
   BarChart3,
   TrendingUp,
   Heart,
@@ -25,8 +23,6 @@ import FIRACAnalysis from '../components/analysis/FIRACAnalysis';
 import CompleteDataViewer from '../components/analysis/CompleteDataViewer';
 import ProcessTimeline from '../components/analysis/ProcessTimeline';
 import AIDocumentGenerator from '../components/documents/AIDocumentGenerator';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 const tabConfig = [
   { id: 'overview', name: 'Visão Geral', icon: Eye },

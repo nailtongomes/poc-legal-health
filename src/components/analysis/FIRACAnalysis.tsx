@@ -5,15 +5,12 @@ import {
   BookOpen,
   Brain,
   Target,
-  Calendar,
-  AlertTriangle,
   CheckCircle,
   XCircle,
   Info,
   TrendingUp,
   TrendingDown,
   Shield,
-  Gavel,
   Clock,
   DollarSign,
   Activity,
@@ -53,40 +50,37 @@ const FIRACAnalysis: React.FC<FIRACAnalysisProps> = ({ process }) => {
     );
   };
 
-  // Extract and process FIRAC data from the SQLite JSON
-  const analise_llm = process.analise_llm || {};
-  
   // Generate FIRAC analysis from available data
   const firacData: Record<string, FIRACSection> = {
     facts: {
       title: 'Fatos (Facts)',
       icon: FileText,
       color: 'blue',
-      items: generateFactsFromProcess(process, analise_llm)
+      items: generateFactsFromProcess(process)
     },
     issues: {
       title: 'Questões (Issues)', 
       icon: Scale,
       color: 'purple',
-      items: generateIssuesFromProcess(process, analise_llm)
+      items: generateIssuesFromProcess(process)
     },
     rules: {
       title: 'Regras (Rules)',
       icon: BookOpen,
       color: 'green',
-      items: generateRulesFromProcess(process, analise_llm)
+      items: generateRulesFromProcess(process)
     },
     analysis: {
       title: 'Análise (Analysis)',
       icon: Brain,
       color: 'orange',
-      items: generateAnalysisFromProcess(process, analise_llm)
+      items: generateAnalysisFromProcess(process)
     },
     conclusion: {
       title: 'Conclusão (Conclusion)',
       icon: Target,
       color: 'red',
-      items: generateConclusionFromProcess(process, analise_llm)
+      items: generateConclusionFromProcess(process)
     }
   };
 
@@ -342,34 +336,34 @@ const FIRACAnalysis: React.FC<FIRACAnalysisProps> = ({ process }) => {
 };
 
 // Helper functions to generate FIRAC content from process data
-function generateFactsFromProcess(process: HealthInsuranceProcess, analise_llm: any) {
+function generateFactsFromProcess(process: HealthInsuranceProcess) {
   const facts = [];
   
   // Basic case facts
   facts.push({
     title: 'Identificação do Processo',
     content: `Processo nº ${process.numero_processo} tramitando há ${process.cronologia_processual.dias_tramitacao_total} dias, envolvendo ${process.partes_principais}.`,
-    classification: 'neutral',
+    classification: 'neutral' as const,
     confidence: 100,
-    impact: 'low'
+    impact: 'low' as const
   });
 
   // Medical specialty and procedure
   facts.push({
     title: 'Especialidade Médica e Procedimento',
     content: `Caso envolvendo ${process.classificacao_demanda.especialidade_medica} com procedimento específico: ${process.classificacao_demanda.procedimento_especifico}. Caráter: ${process.classificacao_demanda.carater_urgencia}.`,
-    classification: process.classificacao_demanda.carater_urgencia === 'urgente' ? 'favorable' : 'neutral',
+    classification: (process.classificacao_demanda.carater_urgencia === 'urgente' ? 'favorable' : 'neutral') as 'favorable' | 'neutral',
     confidence: 85,
-    impact: process.classificacao_demanda.carater_urgencia === 'urgente' ? 'high' : 'medium'
+    impact: (process.classificacao_demanda.carater_urgencia === 'urgente' ? 'high' : 'medium') as 'high' | 'medium'
   });
 
   // Financial facts
   facts.push({
     title: 'Aspectos Financeiros',
     content: `Valor da causa: R$ ${process.aspectos_financeiros.valor_inicial_causa.toLocaleString('pt-BR')}. ${process.aspectos_financeiros.valor_multa_diaria ? `Multa diária configurada: R$ ${process.aspectos_financeiros.valor_multa_diaria.toLocaleString('pt-BR')}.` : 'Sem multa diária configurada.'}`,
-    classification: process.aspectos_financeiros.valor_multa_diaria ? 'favorable' : 'neutral',
+    classification: (process.aspectos_financeiros.valor_multa_diaria ? 'favorable' : 'neutral') as 'favorable' | 'neutral',
     confidence: 95,
-    impact: process.aspectos_financeiros.valor_inicial_causa > 100000 ? 'high' : 'medium'
+    impact: (process.aspectos_financeiros.valor_inicial_causa > 100000 ? 'high' : 'medium') as 'high' | 'medium'
   });
 
   // Court decisions if available
@@ -377,25 +371,25 @@ function generateFactsFromProcess(process: HealthInsuranceProcess, analise_llm: 
     facts.push({
       title: 'Liminar Deferida',
       content: `Liminar de antecipação de tutela foi deferida, determinando o cumprimento das obrigações pela operadora de saúde.`,
-      classification: 'favorable',
+      classification: 'favorable' as const,
       confidence: 100,
-      impact: 'high'
+      impact: 'high' as const
     });
   }
 
   return facts;
 }
 
-function generateIssuesFromProcess(process: HealthInsuranceProcess, analise_llm: any) {
+function generateIssuesFromProcess(process: HealthInsuranceProcess) {
   const issues = [];
 
   // Main legal issue
   issues.push({
     title: 'Questão Principal - Cobertura de Plano de Saúde',
     content: `O plano de saúde tem obrigação de fornecer cobertura para ${process.classificacao_demanda.procedimento_especifico} na especialidade de ${process.classificacao_demanda.especialidade_medica}?`,
-    classification: 'neutral',
+    classification: 'neutral' as const,
     confidence: 90,
-    impact: 'high'
+    impact: 'high' as const
   });
 
   // Urgency/emergency issue
@@ -403,9 +397,9 @@ function generateIssuesFromProcess(process: HealthInsuranceProcess, analise_llm:
     issues.push({
       title: 'Questão de Urgência/Emergência',
       content: `Sendo caracterizada a urgência/emergência médica, há limitações contratuais aplicáveis à cobertura do procedimento?`,
-      classification: 'favorable',
+      classification: 'favorable' as const,
       confidence: 85,
-      impact: 'high'
+      impact: 'high' as const
     });
   }
 
@@ -413,75 +407,75 @@ function generateIssuesFromProcess(process: HealthInsuranceProcess, analise_llm:
   issues.push({
     title: 'Interpretação Contratual',
     content: `As cláusulas contratuais que eventualmente excluem ou limitam a cobertura do procedimento são válidas e aplicáveis ao caso concreto?`,
-    classification: 'neutral',
+    classification: 'neutral' as const,
     confidence: 75,
-    impact: 'medium'
+    impact: 'medium' as const
   });
 
   // Regulatory compliance
   issues.push({
     title: 'Conformidade Regulatória ANS',
     content: `O procedimento está incluído no rol de procedimentos obrigatórios da ANS e há conformidade com as normas regulamentares?`,
-    classification: process.metricas_dashboard.score_urgencia >= 7 ? 'favorable' : 'neutral',
+    classification: (process.metricas_dashboard.score_urgencia >= 7 ? 'favorable' : 'neutral') as 'favorable' | 'neutral',
     confidence: 80,
-    impact: 'medium'
+    impact: 'medium' as const
   });
 
   return issues;
 }
 
-function generateRulesFromProcess(process: HealthInsuranceProcess, analise_llm: any) {
+function generateRulesFromProcess(process: HealthInsuranceProcess) {
   const rules = [];
 
   // CDC rules
   rules.push({
     title: 'Código de Defesa do Consumidor',
     content: 'Art. 51, IV e § 1º, II do CDC - São nulas as cláusulas contratuais que estabeleçam obrigações consideradas iníquas, abusivas, que coloquem o consumidor em desvantagem exagerada ou sejam incompatíveis com a boa-fé ou equidade.',
-    classification: 'favorable',
+    classification: 'favorable' as const,
     confidence: 95,
-    impact: 'high'
+    impact: 'high' as const
   });
 
   // Health law
   rules.push({
     title: 'Lei dos Planos de Saúde',
     content: 'Lei 9.656/98, Art. 12 - São facultativas as seguintes coberturas: (...) Parágrafo único. Em caso de urgência ou emergência, a cobertura se estende às primeiras 12 horas de atendimento.',
-    classification: process.classificacao_demanda.carater_urgencia === 'urgente' ? 'favorable' : 'neutral',
+    classification: (process.classificacao_demanda.carater_urgencia === 'urgente' ? 'favorable' : 'neutral') as 'favorable' | 'neutral',
     confidence: 90,
-    impact: 'high'
+    impact: 'high' as const
   });
 
   // ANS regulations
   rules.push({
     title: 'Regulamentação ANS',
     content: 'Resolução Normativa ANS - Rol de Procedimentos e Eventos em Saúde, estabelecendo cobertura mínima obrigatória para procedimentos médicos.',
-    classification: 'favorable',
+    classification: 'favorable' as const,
     confidence: 85,
-    impact: 'medium'
+    impact: 'medium' as const
   });
 
   // Constitutional principles
   rules.push({
     title: 'Princípios Constitucionais',
     content: 'Art. 196, CF/88 - A saúde é direito de todos e dever do Estado, garantido mediante políticas sociais e econômicas que visem à redução do risco de doença.',
-    classification: 'favorable',
+    classification: 'favorable' as const,
     confidence: 80,
-    impact: 'medium'
+    impact: 'medium' as const
   });
 
   return rules;
 }
 
-function generateAnalysisFromProcess(process: HealthInsuranceProcess, analise_llm: any) {
+function generateAnalysisFromProcess(process: HealthInsuranceProcess) {
   const analysis = [];
 
   // Legal precedent analysis
   analysis.push({
     title: 'Análise Precedencial',
     content: `Considerando a jurisprudência consolidada do STJ e tribunais estaduais, casos envolvendo ${process.classificacao_demanda.especialidade_medica} tendem a ser favoráveis ao beneficiário quando há comprovação da necessidade médica e urgência do procedimento.`,
-    classification: 'favorable',
+    classification: 'favorable' as const,
     confidence: 85,
-    impact: 'high'
+    impact: 'high' as const
   });
 
   // Risk assessment
@@ -490,33 +484,33 @@ function generateAnalysisFromProcess(process: HealthInsuranceProcess, analise_ll
   analysis.push({
     title: 'Avaliação de Risco Processual',
     content: `O caso apresenta risco ${riskLevel} com base na complexidade jurídica (${process.metricas_dashboard.score_complexidade}/10) e valor da causa. ${process.aspectos_financeiros.valor_multa_diaria ? 'A existência de multa diária aumenta a pressão para acordo.' : 'Ausência de multa permite estratégia mais conservadora.'}`,
-    classification: riskLevel === 'baixo' ? 'favorable' : riskLevel === 'médio' ? 'neutral' : 'unfavorable',
+    classification: (riskLevel === 'baixo' ? 'favorable' : riskLevel === 'médio' ? 'neutral' : 'unfavorable') as 'favorable' | 'neutral' | 'unfavorable',
     confidence: 80,
-    impact: riskLevel === 'alto' ? 'high' : 'medium'
+    impact: (riskLevel === 'alto' ? 'high' : 'medium') as 'high' | 'medium'
   });
 
   // Time factor analysis
   analysis.push({
     title: 'Fator Temporal',
     content: `Com ${process.cronologia_processual.dias_tramitacao_total} dias de tramitação, ${process.cronologia_processual.dias_tramitacao_total > 365 ? 'o prolongamento do processo favorece acordo para evitar custos adicionais e desgaste.' : 'o tempo de tramitação ainda permite estratégia defensiva consistente.'}`,
-    classification: process.cronologia_processual.dias_tramitacao_total > 365 ? 'neutral' : 'favorable',
+    classification: (process.cronologia_processual.dias_tramitacao_total > 365 ? 'neutral' : 'favorable') as 'neutral' | 'favorable',
     confidence: 75,
-    impact: 'medium'
+    impact: 'medium' as const
   });
 
   // Financial impact analysis
   analysis.push({
     title: 'Impacto Financeiro',
     content: `O valor da causa (R$ ${process.aspectos_financeiros.valor_inicial_causa.toLocaleString('pt-BR')}) ${process.aspectos_financeiros.valor_inicial_causa > 100000 ? 'justifica investimento em defesa técnica especializada' : 'permite estratégia de defesa padrão'}. Score de impacto financeiro: ${process.metricas_dashboard.score_impacto_financeiro}/10.`,
-    classification: process.aspectos_financeiros.valor_inicial_causa < 50000 ? 'favorable' : 'neutral',
+    classification: (process.aspectos_financeiros.valor_inicial_causa < 50000 ? 'favorable' : 'neutral') as 'favorable' | 'neutral',
     confidence: 90,
-    impact: process.aspectos_financeiros.valor_inicial_causa > 100000 ? 'high' : 'medium'
+    impact: (process.aspectos_financeiros.valor_inicial_causa > 100000 ? 'high' : 'medium') as 'high' | 'medium'
   });
 
   return analysis;
 }
 
-function generateConclusionFromProcess(process: HealthInsuranceProcess, analise_llm: any) {
+function generateConclusionFromProcess(process: HealthInsuranceProcess) {
   const conclusions = [];
 
   // Main strategy
@@ -526,27 +520,27 @@ function generateConclusionFromProcess(process: HealthInsuranceProcess, analise_
   conclusions.push({
     title: 'Estratégia Recomendada',
     content: `Com base na análise FIRAC, recomenda-se estratégia ${strategy}. Probabilidade de sucesso estimada: ${successProbability}%. ${strategy === 'defensiva' ? 'Investir em defesa técnica robusta.' : strategy === 'acordo' ? 'Buscar acordo vantajoso.' : 'Focar em argumentos processuais e técnicos.'}`,
-    classification: strategy === 'defensiva' ? 'favorable' : 'neutral',
+    classification: (strategy === 'defensiva' ? 'favorable' : 'neutral') as 'favorable' | 'neutral',
     confidence: 85,
-    impact: 'high'
+    impact: 'high' as const
   });
 
   // Next steps
   conclusions.push({
     title: 'Próximas Ações',
     content: `1) ${process.metricas_dashboard.requer_escalacao_executiva ? 'Comunicar diretoria sobre caso crítico; ' : ''}2) ${process.aspectos_financeiros.valor_multa_diaria ? 'Avaliar cumprimento para evitar multa; ' : ''}3) Preparar manifestação técnica especializada; 4) ${process.cronologia_processual.dias_tramitacao_total > 365 ? 'Considerar proposta de acordo.' : 'Monitorar prazos processuais.'}`,
-    classification: 'neutral',
+    classification: 'neutral' as const,
     confidence: 95,
-    impact: 'high'
+    impact: 'high' as const
   });
 
   // Resource allocation
   conclusions.push({
     title: 'Alocação de Recursos',
     content: `Caso requer ${process.metricas_dashboard.score_complexidade >= 7 ? 'advogado sênior e consultoria especializada' : process.metricas_dashboard.score_complexidade >= 5 ? 'advogado pleno com suporte técnico' : 'acompanhamento padrão'}. Orçamento estimado: R$ ${estimateResourceCost(process).toLocaleString('pt-BR')}.`,
-    classification: 'neutral',
+    classification: 'neutral' as const,
     confidence: 80,
-    impact: 'medium'
+    impact: 'medium' as const
   });
 
   return conclusions;

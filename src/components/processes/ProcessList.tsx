@@ -16,7 +16,7 @@ import {
 import { clsx } from 'clsx';
 import Badge from '../common/Badge';
 import { mockProcessos, departmentConfig, complexityConfig, priorityConfig, workflowConfig, roleConfig, mockUsers } from '../../data/mockData';
-import { FilterState, Department, PriorityLevel, ComplexityLevel, ProcessStatus, WorkflowStatus, UserRole } from '../../types';
+import { FilterState, Department, PriorityLevel, ComplexityLevel, ProcessStatus, WorkflowStatus, UserRole, Tag } from '../../types';
 import { formatDistanceToNow } from 'date-fns';
 import { useData } from '../../context/DataContext';
 
@@ -185,7 +185,7 @@ export default function ProcessList() {
             {dataSource === 'pgm' && <span className="ml-2 text-sm">• Dados PGM</span>}
             {filters.departamento !== 'todos' && (
               <span className="ml-2 text-sm">
-                • {departmentConfig[filters.departamento].name}
+                • {departmentConfig[filters.departamento as keyof typeof departmentConfig].name}
               </span>
             )}
           </p>
@@ -406,7 +406,7 @@ export default function ProcessList() {
         <div className="divide-y divide-gray-200">
           {filteredProcesses.map((processo) => {
             const daysLeft = getDaysUntilDeadline(processo.prazoResposta);
-            const StatusIcon = statusConfig[processo.status].icon;
+            const StatusIcon = statusConfig[processo.status as keyof typeof statusConfig].icon;
             
             return (
               <div
@@ -445,8 +445,8 @@ export default function ProcessList() {
                         tag={{
                           id: `dept-${processo.departamentoResponsavel}`,
                           categoria: 'departamento',
-                          valor: departmentConfig[processo.departamentoResponsavel].name,
-                          cor: departmentConfig[processo.departamentoResponsavel].color,
+                          valor: departmentConfig[processo.departamentoResponsavel as keyof typeof departmentConfig].name,
+                          cor: departmentConfig[processo.departamentoResponsavel as keyof typeof departmentConfig].color,
                           confianca: 100,
                         }}
                         size="sm"
@@ -462,8 +462,8 @@ export default function ProcessList() {
                             tag={{
                               id: `status-${processo.status}`,
                               categoria: 'prioridade',
-                              valor: statusConfig[processo.status].name,
-                              cor: statusConfig[processo.status].color,
+                              valor: statusConfig[processo.status as keyof typeof statusConfig].name,
+                              cor: statusConfig[processo.status as keyof typeof statusConfig].color,
                               confianca: 100,
                             }}
                             size="sm"
@@ -473,8 +473,8 @@ export default function ProcessList() {
                           tag={{
                             id: `workflow-${processo.workflowStatus}`,
                             categoria: 'workflow',
-                            valor: workflowConfig[processo.workflowStatus].name,
-                            cor: workflowConfig[processo.workflowStatus].color,
+                            valor: workflowConfig[processo.workflowStatus as keyof typeof workflowConfig].name,
+                            cor: workflowConfig[processo.workflowStatus as keyof typeof workflowConfig].color,
                             confianca: 100,
                           }}
                           size="sm"
@@ -491,8 +491,8 @@ export default function ProcessList() {
                             tag={{
                               id: `role-${processo.responsavel.id}`,
                               categoria: 'responsavel',
-                              valor: roleConfig[processo.responsavel.role].name,
-                              cor: roleConfig[processo.responsavel.role].color,
+                              valor: roleConfig[processo.responsavel.role as keyof typeof roleConfig].name,
+                              cor: roleConfig[processo.responsavel.role as keyof typeof roleConfig].color,
                               confianca: 100,
                             }}
                             size="sm"
@@ -532,7 +532,7 @@ export default function ProcessList() {
                         <span className="text-xs font-medium">{processo.confiancaIA}%</span>
                       </div>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {processo.tags.slice(0, 2).map((tag) => (
+                        {processo.tags.slice(0, 2).map((tag: Tag) => (
                           <Badge key={tag.id} tag={tag} size="sm" />
                         ))}
                         {processo.tags.length > 2 && (
